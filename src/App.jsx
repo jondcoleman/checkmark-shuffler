@@ -36,7 +36,13 @@ function App() {
 
   const handleDownload = () => {
     if (!data) return;
-    const csv = Papa.unparse(data);
+    
+    // Clean data for export: Replace "UNKNOWN" with blank strings
+    const cleanData = data.map(row => 
+      row.map(cell => (String(cell).toUpperCase() === 'UNKNOWN' ? '' : cell))
+    );
+
+    const csv = Papa.unparse(cleanData);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
