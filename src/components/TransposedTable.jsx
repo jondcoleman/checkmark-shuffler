@@ -114,21 +114,22 @@ const CellValue = ({ value, rowHeader }) => {
 export function TransposedTable({ data }) {
   if (!data || data.length === 0) return null;
 
-  const header = data[0]; // ["Habits", "2025-12-30", ...]
+  const header = data[0]; 
   const rows = data.slice(1);
+  
+  // Ref for scroll container to track position (optional for advanced fading, but CSS sticky handles clean scrolling well)
+  // For "obvious" scrolling, we'll force a visible scrollbar via CSS (done) and add a right-side fade overlay.
 
   return (
-    <div className="w-full h-full overflow-hidden flex flex-col bg-white/40 backdrop-blur-sm rounded-xl shadow-2xl border border-white/50">
+    <div className="w-full h-full overflow-hidden flex flex-col bg-white/40 backdrop-blur-sm rounded-xl shadow-2xl border border-white/50 relative">
       {/* Table Container */}
-      <div className="overflow-auto relative flex-1">
-        <table className="w-full text-left border-collapse table-fixed">
+      <div className="overflow-auto relative flex-1 w-full scroll-smooth">
+        <table className="w-full text-left border-collapse table-fixed min-w-max">
           <thead>
             <tr className="bg-white/90 backdrop-blur sticky top-0 z-20 shadow-sm">
-               {/* First Header Cell (Habits Label) - Sticky Left + Top */}
                <th className="p-2 w-[180px] min-w-[180px] sticky left-0 z-30 bg-white/95 backdrop-blur-md border-b border-r border-gray-100/50 font-bold text-sm text-gray-800 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)]">
                  {header[0]}
                </th>
-               {/* Date Headers */}
                {header.slice(1).map((date, i) => (
                  <th key={i} className="p-1 w-[36px] min-w-[36px] text-center border-b border-gray-100/50 bg-white/50">
                     {formatDateHeader(date)}
@@ -142,12 +143,9 @@ export function TransposedTable({ data }) {
                 key={rowIndex} 
                 className="group hover:bg-white/40 transition-colors border-b border-gray-100/30 last:border-0 h-[36px]"
               >
-                {/* Habit Name - Sticky Left */}
                 <td className="p-2 sticky left-0 z-10 bg-white/80 group-hover:bg-white/95 backdrop-blur-sm border-r border-gray-100/50 font-medium text-gray-700 text-xs md:text-sm truncate shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)]">
                      <span title={row[0]}>{row[0]}</span>
                 </td>
-                
-                {/* Values */}
                 {row.slice(1).map((cell, cellIndex) => (
                   <td key={cellIndex} className="p-0 text-center border-l border-gray-50/50">
                     <div className="flex items-center justify-center w-full h-full">
@@ -160,6 +158,10 @@ export function TransposedTable({ data }) {
           </tbody>
         </table>
       </div>
+      
+      {/* Right Fade Overlay to indicate horizontal scroll */}
+      <div className="absolute top-0 bottom-0 right-0 w-8 bg-gradient-to-l from-white/60 to-transparent pointer-events-none z-20" />
+      <div className="absolute top-0 bottom-0 right-0 w-px bg-gradient-to-b from-transparent via-gray-200/50 to-transparent pointer-events-none z-20" />
     </div>
   );
 }
